@@ -1,0 +1,64 @@
+{
+  "name": "legend-of-idle-coding",
+  "displayName": "代码挂机传说",
+  "description": "一款在VS Code中运行的纯文字挂机游戏插件",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "idleCodingGameView",
+          "name": "CodeAFKLegend",
+          "when": "true"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "idleCodingGame.openGame",
+        "title": "打开游戏",
+        "category": "代码挂机传说"
+      },
+      {
+        "command": "idleCodingGame.resetGame",
+        "title": "重置游戏",
+        "category": "代码挂机传说"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "idleCodingGame.openGame",
+          "when": "view == idleCodingGameView",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "eslint": "^8.20.0",
+    "typescript": "^4.7.4"
+  }
+}
