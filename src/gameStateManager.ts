@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { t } from './i18n/i18nManager';
 
 /**
  * 游戏状态接口定义
@@ -175,7 +176,11 @@ export class GameStateManager {
 
         if (this.gameState.settings.showNotifications) {
             vscode.window.showInformationMessage(
-                `击败了 ${bug.name}！获得 ${bug.reward.linesOfCode} LoC, ${bug.reward.bugFragments} Bug碎片`
+                t('notifications.bugDefeated', {
+                    bugName: bug.name,
+                    linesOfCode: bug.reward.linesOfCode,
+                    bugFragments: bug.reward.bugFragments
+                })
             );
         }
     }
@@ -220,11 +225,11 @@ export class GameStateManager {
      */
     private getBugDisplayName(type: Bug['type']): string {
         const names = {
-            'NullPointerException': '空指针异常怪',
-            'MemoryLeak': '内存泄漏虫',
-            'InfiniteLoop': '死循环魔',
-            'SyntaxError': '语法错误精',
-            'RuntimeError': '运行时异常兽'
+            'NullPointerException': t('bugs.nullPointerException'),
+            'MemoryLeak': t('bugs.memoryLeak'),
+            'InfiniteLoop': t('bugs.infiniteLoop'),
+            'SyntaxError': t('bugs.syntaxError'),
+            'RuntimeError': t('bugs.runtimeError')
         };
         return names[type];
     }
@@ -244,7 +249,7 @@ export class GameStateManager {
             this.gameState.stats.defense += 1;
 
             if (this.gameState.settings.showNotifications) {
-                vscode.window.showInformationMessage(`恭喜！升级到 ${this.gameState.character.level} 级！`);
+                vscode.window.showInformationMessage(t('notifications.levelUp', { level: this.gameState.character.level }));
             }
         }
     }
@@ -336,7 +341,7 @@ export class GameStateManager {
     private createDefaultGameState(): GameState {
         return {
             character: {
-                name: '代码勇者',
+                name: t('game.character.defaultName'),
                 level: 1,
                 experience: 0,
                 experienceToNext: 100

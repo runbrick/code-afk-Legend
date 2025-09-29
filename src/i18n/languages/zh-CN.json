@@ -1,0 +1,90 @@
+{
+  "game": {
+    "title": "代码挂机传说",
+    "character": {
+      "defaultName": "编程新手",
+      "level": "等级",
+      "experience": "经验"
+    }
+  },
+  "ui": {
+    "resources": "资源",
+    "character": "角色属性",
+    "language": "选择语言",
+    "ignore": "忽略"
+  },
+  "resources": {
+    "linesOfCode": "代码行数",
+    "bugFragments": "Bug碎片",
+    "generation": "生成速度",
+    "perSecond": "秒"
+  },
+  "stats": {
+    "computingPower": "算力",
+    "attack": "攻击力",
+    "defense": "防御力",
+    "cost": "费用"
+  },
+  "battle": {
+    "inBattle": "战斗中",
+    "health": "生命值",
+    "autoProgress": "战斗自动进行中...",
+    "fightNow": "立即战斗"
+  },
+  "upgrade": {
+    "title": "升级",
+    "success": "成功升级了 {upgradeType}！",
+    "insufficient": "代码行数不足！",
+    "computingPower": {
+      "name": "升级算力",
+      "description": "提高每秒生成的代码行数",
+      "button": "升级算力"
+    },
+    "attack": {
+      "name": "升级攻击力",
+      "description": "在战斗中造成更多伤害",
+      "button": "升级攻击"
+    },
+    "defense": {
+      "name": "升级防御力",
+      "description": "减少来自Bug的伤害",
+      "button": "升级防御"
+    }
+  },
+  "statistics": {
+    "title": "统计信息",
+    "totalLinesGenerated": "总生成代码行数",
+    "totalBugsDefeated": "总击败Bug数",
+    "totalPlayTime": "总游戏时间",
+    "keystrokes": "按键次数",
+    "minutes": "分钟",
+    "seconds": "秒"
+  },
+  "bugs": {
+    "nullPointerException": "空指针异常怪",
+    "memoryLeak": "内存泄漏虫",
+    "infiniteLoop": "死循环魔",
+    "syntaxError": "语法错误精",
+    "runtimeError": "运行时异常兽"
+  },
+  "notifications": {
+    "bugDefeated": "击败了 {bugName}！获得 {linesOfCode} 代码行数和 {bugFragments} Bug碎片！",
+    "levelUp": "等级提升！现在是 {level} 级！",
+    "dangerousCode": "检测到危险代码！{bugName} 出现了！"
+  },
+  "commands": {
+    "openGame": "打开代码挂机传说",
+    "resetWarning": "确定要重置游戏吗？这将清除所有进度！",
+    "resetConfirm": "确认重置",
+    "resetCancel": "取消",
+    "resetSuccess": "游戏已重置！"
+  },
+  "welcome": {
+    "typescript": "欢迎进入TypeScript的世界！类型安全为你的代码之旅保驾护航！",
+    "javascript": "JavaScript世界欢迎你！灵活性与动态性的完美结合！",
+    "python": "Python之路已开启！简洁优雅的代码等待你的创造！",
+    "java": "踏入Java殿堂！面向对象的强大力量在此展现！",
+    "cpp": "C++战场！性能与控制的终极挑战！",
+    "rust": "Rust领域！内存安全与零成本抽象的新纪元！"
+  }
+}

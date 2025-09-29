@@ -1,0 +1,90 @@
+{
+  "game": {
+    "title": "Code AFK Legend",
+    "character": {
+      "defaultName": "Novice Programmer",
+      "level": "Level",
+      "experience": "Experience"
+    }
+  },
+  "ui": {
+    "resources": "Resources",
+    "character": "Character Stats",
+    "language": "Select Language",
+    "ignore": "Ignore"
+  },
+  "resources": {
+    "linesOfCode": "Lines of Code",
+    "bugFragments": "Bug Fragments",
+    "generation": "Generation Rate",
+    "perSecond": "per second"
+  },
+  "stats": {
+    "computingPower": "Computing Power",
+    "attack": "Attack",
+    "defense": "Defense",
+    "cost": "Cost"
+  },
+  "battle": {
+    "inBattle": "In Battle",
+    "health": "Health",
+    "autoProgress": "Battle in progress...",
+    "fightNow": "Fight Now"
+  },
+  "upgrade": {
+    "title": "Upgrades",
+    "success": "Successfully upgraded {upgradeType}!",
+    "insufficient": "Insufficient lines of code!",
+    "computingPower": {
+      "name": "Upgrade Computing Power",
+      "description": "Increase lines of code generated per second",
+      "button": "Upgrade Computing"
+    },
+    "attack": {
+      "name": "Upgrade Attack",
+      "description": "Deal more damage in battles",
+      "button": "Upgrade Attack"
+    },
+    "defense": {
+      "name": "Upgrade Defense",
+      "description": "Reduce damage taken from bugs",
+      "button": "Upgrade Defense"
+    }
+  },
+  "statistics": {
+    "title": "Statistics",
+    "totalLinesGenerated": "Total Lines Generated",
+    "totalBugsDefeated": "Total Bugs Defeated",
+    "totalPlayTime": "Total Play Time",
+    "keystrokes": "Keystrokes",
+    "minutes": " minutes ",
+    "seconds": " seconds"
+  },
+  "bugs": {
+    "nullPointerException": "NullPointer Beast",
+    "memoryLeak": "Memory Leak Bug",
+    "infiniteLoop": "Infinite Loop Demon",
+    "syntaxError": "Syntax Error Spirit",
+    "runtimeError": "Runtime Error Monster"
+  },
+  "notifications": {
+    "bugDefeated": "Defeated {bugName}! Gained {linesOfCode} lines of code and {bugFragments} bug fragments!",
+    "levelUp": "Level up! Now level {level}!",
+    "dangerousCode": "Dangerous code detected! {bugName} has appeared!"
+  },
+  "commands": {
+    "openGame": "Open Code AFK Legend",
+    "resetWarning": "Are you sure you want to reset the game? This will clear all progress!",
+    "resetConfirm": "Confirm Reset",
+    "resetCancel": "Cancel",
+    "resetSuccess": "Game has been reset!"
+  },
+  "welcome": {
+    "typescript": "Welcome to the TypeScript world! Type safety guards your coding journey!",
+    "javascript": "JavaScript world welcomes you! The perfect combination of flexibility and dynamism!",
+    "python": "Python path has opened! Elegant and concise code awaits your creation!",
+    "java": "Enter the Java temple! The power of object-oriented programming is revealed here!",
+    "cpp": "C++ battlefield! The ultimate challenge of performance and control!",
+    "rust": "Rust domain! A new era of memory safety and zero-cost abstractions!"
+  }
+}

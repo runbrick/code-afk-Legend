@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { GameStateManager } from './gameStateManager';
+import { t } from './i18n/i18nManager';
 
 /**
  * 编辑器事件监听器
@@ -237,18 +238,18 @@ export class EditorListener {
     private triggerSpecialBugEvent(bugType: 'NullPointerException' | 'InfiniteLoop' | 'MemoryLeak' | 'RuntimeError', fileExtension: string): void {
         // 显示特殊Bug出现的通知
         const bugNames = {
-            'NullPointerException': '空指针异常怪',
-            'InfiniteLoop': '死循环魔',
-            'MemoryLeak': '内存泄漏虫',
-            'RuntimeError': '运行时异常兽'
+            'NullPointerException': t('bugs.nullPointerException'),
+            'InfiniteLoop': t('bugs.infiniteLoop'),
+            'MemoryLeak': t('bugs.memoryLeak'),
+            'RuntimeError': t('bugs.runtimeError')
         };
 
         vscode.window.showWarningMessage(
-            `检测到危险代码！${bugNames[bugType]} 出现了！`,
-            '立即战斗',
-            '忽略'
+            t('notifications.dangerousCode', { bugName: bugNames[bugType] }),
+            t('battle.fightNow'),
+            t('ui.ignore')
         ).then(selection => {
-            if (selection === '立即战斗') {
+            if (selection === t('battle.fightNow')) {
                 // 这里可以触发立即战斗逻辑
                 // 或者打开游戏面板
                 vscode.commands.executeCommand('idleCodingGame.openGame');
@@ -261,12 +262,12 @@ export class EditorListener {
      */
     private showWelcomeMessage(fileExtension: string): void {
         const welcomeMessages: Record<string, string> = {
-            '.ts': '欢迎进入TypeScript的世界！类型安全为你的代码之旅保驾护航！',
-            '.js': 'JavaScript世界欢迎你！灵活性与动态性的完美结合！',
-            '.py': 'Python之路已开启！简洁优雅的代码等待你的创造！',
-            '.java': '踏入Java殿堂！面向对象的强大力量在此展现！',
-            '.cpp': 'C++战场！性能与控制的终极挑战！',
-            '.rust': 'Rust领域！内存安全与零成本抽象的新纪元！'
+            '.ts': t('welcome.typescript'),
+            '.js': t('welcome.javascript'),
+            '.py': t('welcome.python'),
+            '.java': t('welcome.java'),
+            '.cpp': t('welcome.cpp'),
+            '.rust': t('welcome.rust')
         };
 
         const message = welcomeMessages[fileExtension];

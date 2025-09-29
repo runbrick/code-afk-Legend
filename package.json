@@ -33,6 +33,11 @@
         "command": "idleCodingGame.resetGame",
         "title": "重置游戏",
         "category": "代码挂机传说"
+      },
+      {
+        "command": "idleCodingGame.changeLanguage",
+        "title": "切换语言",
+        "category": "代码挂机传说"
       }
     ],
     "menus": {
@@ -46,8 +51,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run compile && npm run copy-resources",
     "compile": "tsc -p ./",
+    "copy-resources": "if not exist out\\i18n\\languages mkdir out\\i18n\\languages && copy src\\i18n\\languages\\*.json out\\i18n\\languages\\",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",

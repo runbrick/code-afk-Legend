@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { GameStateManager } from './gameStateManager';
 import { IdleCodingGameProvider } from './gameViewProvider';
 import { EditorListener } from './editorListener';
+import { I18nManager, t } from './i18n/i18nManager';
 
 let gameStateManager: GameStateManager;
 let gameProvider: IdleCodingGameProvider;
@@ -15,6 +16,9 @@ let gameLoop: NodeJS.Timeout;
  */
 export function activate(context: vscode.ExtensionContext) {
     console.log('代码挂机传说插件已激活');
+
+    // 初始化多语言管理器
+    const i18nManager = I18nManager.getInstance(context);
 
     // 初始化游戏状态管理器
     gameStateManager = new GameStateManager(context);
@@ -35,15 +39,39 @@ export function activate(context: vscode.ExtensionContext) {
 
     const resetGameCommand = vscode.commands.registerCommand('idleCodingGame.resetGame', async () => {
         const result = await vscode.window.showWarningMessage(
-            '确定要重置游戏吗？这将清除所有进度！',
+            t('commands.resetWarning'),
             { modal: true },
-            '确定重置',
-            '取消'
+            t('commands.resetConfirm'),
+            t('commands.resetCancel')
         );
 
-        if (result === '确定重置') {
+        if (result === t('commands.resetConfirm')) {
             gameStateManager.resetGame();
-            vscode.window.showInformationMessage('游戏已重置！');
+            vscode.window.showInformationMessage(t('commands.resetSuccess'));
+        }
+    });
+
+    const changeLanguageCommand = vscode.commands.registerCommand('idleCodingGame.changeLanguage', async () => {
+        const i18nManager = I18nManager.getInstance();
+        const availableLanguages = i18nManager.getAvailableLanguages();
+
+        const items = availableLanguages.map(lang => ({
+            label: lang.name,
+            description: lang.code,
+            picked: lang.code === i18nManager.getCurrentLanguage()
+        }));
+
+        const selected = await vscode.window.showQuickPick(items, {
+            placeHolder: t('ui.language')
+        });
+
+        if (selected) {
+            const success = await i18nManager.setLanguage(selected.description!);
+            if (success) {
+                vscode.window.showInformationMessage(
+                    `Language changed to ${selected.label}. Please reload VS Code to apply changes.`
+                );
+            }
         }
     });
 
@@ -58,9 +86,18 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider,
         openGameCommand,
         resetGameCommand,
+        changeLanguageCommand,
         statusBarItem,
         ...editorListener.getDisposables()
     );
+
+    // 返回API供其他扩展使用
+    return {
+        registerLanguagePackage: i18nManager.registerLanguagePackage.bind(i18nManager),
+        unregisterLanguagePackage: i18nManager.unregisterLanguagePackage.bind(i18nManager),
+        getCurrentLanguage: i18nManager.getCurrentLanguage.bind(i18nManager),
+        setLanguage: i18nManager.setLanguage.bind(i18nManager)
+    };
 }
 
 /**
@@ -69,7 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
 function initializeStatusBar(): void {
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
     statusBarItem.command = 'idleCodingGame.openGame';
-    statusBarItem.tooltip = '点击打开代码挂机传说游戏面板';
+    statusBarItem.tooltip = t('commands.openGame');
     updateStatusBar();
     statusBarItem.show();
 }
@@ -79,7 +116,7 @@ function initializeStatusBar(): void {
  */
 function updateStatusBar(): void {
     const gameState = gameStateManager.getGameState();
-    statusBarItem.text = `$(code) LoC: ${Math.floor(gameState.resources.linesOfCode)} | CP: ${gameState.stats.computingPower}`;
+    statusBarItem.text = `$(code) ${t('resources.linesOfCode')}: ${Math.floor(gameState.resources.linesOfCode)} | ${t('stats.computingPower')}: ${gameState.stats.computingPower}`;
 }
 
 /**

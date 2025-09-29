@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { GameStateManager } from './gameStateManager';
 import * as path from 'path';
+import { t } from './i18n/i18nManager';
 
 /**
  * 游戏视图提供者
@@ -62,22 +63,22 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
 
         const items: GameTreeItem[] = [
             new GameTreeItem(
-                `${gameState.character.name} (Lv.${gameState.character.level})`,
+                `${gameState.character.name} (${t('game.character.level')}.${gameState.character.level})`,
                 vscode.TreeItemCollapsibleState.Collapsed,
                 'character',
-                `经验: ${gameState.character.experience}/${gameState.character.experienceToNext}`
+                `${t('game.character.experience')}: ${gameState.character.experience}/${gameState.character.experienceToNext}`
             ),
             new GameTreeItem(
-                '资源',
+                t('ui.resources'),
                 vscode.TreeItemCollapsibleState.Collapsed,
                 'resources',
-                `LoC: ${Math.floor(gameState.resources.linesOfCode)}, Bug碎片: ${gameState.resources.bugFragments}`
+                `${t('resources.linesOfCode')}: ${Math.floor(gameState.resources.linesOfCode)}, ${t('resources.bugFragments')}: ${gameState.resources.bugFragments}`
             ),
             new GameTreeItem(
-                '属性',
+                t('ui.character'),
                 vscode.TreeItemCollapsibleState.Collapsed,
                 'stats',
-                `算力: ${gameState.stats.computingPower}, 攻击: ${gameState.stats.attack}, 防御: ${gameState.stats.defense}`
+                `${t('stats.computingPower')}: ${gameState.stats.computingPower}, ${t('stats.attack')}: ${gameState.stats.attack}, ${t('stats.defense')}: ${gameState.stats.defense}`
             )
         ];
 
@@ -86,10 +87,10 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             const bug = gameState.battle.currentBug;
             items.push(
                 new GameTreeItem(
-                    `⚔️ 战斗中: ${bug.name}`,
+                    `⚔️ ${t('battle.inBattle')}: ${bug.name}`,
                     vscode.TreeItemCollapsibleState.None,
                     'battle',
-                    `血量: ${bug.health}/${bug.maxHealth}`
+                    `${t('battle.health')}: ${bug.health}/${bug.maxHealth}`
                 )
             );
         }
@@ -191,11 +192,11 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
         const success = this.gameStateManager.buyUpgrade(upgradeType);
 
         if (success) {
-            vscode.window.showInformationMessage(`成功升级${this.getUpgradeDisplayName(upgradeType)}！`);
+            vscode.window.showInformationMessage(t('upgrade.success', { upgradeType: this.getUpgradeDisplayName(upgradeType) }));
             this.updateWebview();
             this.refresh();
         } else {
-            vscode.window.showWarningMessage('LoC不足，无法升级！');
+            vscode.window.showWarningMessage(t('upgrade.insufficient'));
         }
     }
 
@@ -204,9 +205,9 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
      */
     private getUpgradeDisplayName(upgradeType: string): string {
         const names = {
-            'computingPower': '算力',
-            'attack': '攻击力',
-            'defense': '防御力'
+            'computingPower': t('stats.computingPower'),
+            'attack': t('stats.attack'),
+            'defense': t('stats.defense')
         };
         return names[upgradeType as keyof typeof names] || upgradeType;
     }
@@ -235,7 +236,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>代码挂机传说</title>
+    <title>${t('game.title')}</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -414,33 +415,33 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
 <body>
     <div class="game-container">
         <div class="section">
-            <h2>🎮 代码挂机传说</h2>
+            <h2>🎮 ${t('game.title')}</h2>
             <div class="character-info">
                 <div>
                     <div class="stat-item">
-                        <span>角色名称:</span>
+                        <span>${t('game.character.defaultName')}:</span>
                         <span class="stat-value" id="characterName">${gameState.character.name}</span>
                     </div>
                     <div class="stat-item">
-                        <span>等级:</span>
+                        <span>${t('game.character.level')}:</span>
                         <span class="stat-value" id="characterLevel">${gameState.character.level}</span>
                     </div>
                     <div class="stat-item">
-                        <span>经验:</span>
+                        <span>${t('game.character.experience')}:</span>
                         <span class="stat-value" id="characterExp">${gameState.character.experience}/${gameState.character.experienceToNext}</span>
                     </div>
                 </div>
                 <div>
                     <div class="stat-item">
-                        <span>算力:</span>
+                        <span>${t('stats.computingPower')}:</span>
                         <span class="stat-value" id="computingPower">${gameState.stats.computingPower}</span>
                     </div>
                     <div class="stat-item">
-                        <span>攻击力:</span>
+                        <span>${t('stats.attack')}:</span>
                         <span class="stat-value" id="attack">${gameState.stats.attack}</span>
                     </div>
                     <div class="stat-item">
-                        <span>防御力:</span>
+                        <span>${t('stats.defense')}:</span>
                         <span class="stat-value" id="defense">${gameState.stats.defense}</span>
                     </div>
                 </div>
@@ -451,91 +452,91 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
         </div>
 
         <div class="section">
-            <h2>💰 资源</h2>
+            <h2>💰 ${t('ui.resources')}</h2>
             <div class="resource-display">
                 <div class="resource-item">
                     <div class="resource-value" id="linesOfCode">${Math.floor(gameState.resources.linesOfCode)}</div>
-                    <div class="resource-label">代码行数 (LoC)</div>
+                    <div class="resource-label">${t('resources.linesOfCode')} (LoC)</div>
                 </div>
                 <div class="resource-item">
                     <div class="resource-value" id="bugFragments">${gameState.resources.bugFragments}</div>
-                    <div class="resource-label">Bug碎片</div>
+                    <div class="resource-label">${t('resources.bugFragments')}</div>
                 </div>
             </div>
             <div class="stat-item">
-                <span>每秒生成:</span>
-                <span class="stat-value">${gameState.stats.computingPower} LoC/秒</span>
+                <span>${t('resources.generation')}:</span>
+                <span class="stat-value">${gameState.stats.computingPower} LoC/${t('resources.perSecond')}</span>
             </div>
         </div>
 
         ${gameState.battle.isInBattle && gameState.battle.currentBug ? `
         <div class="section battle-section">
-            <h2>⚔️ 战斗中</h2>
+            <h2>⚔️ ${t('battle.inBattle')}</h2>
             <div class="battle-info">
                 <div>
                     <h3 id="bugName">${gameState.battle.currentBug.name}</h3>
-                    <p>攻击: ${gameState.battle.currentBug.attack} | 防御: ${gameState.battle.currentBug.defense}</p>
+                    <p>${t('stats.attack')}: ${gameState.battle.currentBug.attack} | ${t('stats.defense')}: ${gameState.battle.currentBug.defense}</p>
                 </div>
                 <div class="bug-health">
-                    <div>血量: <span id="bugHealth">${gameState.battle.currentBug.health}</span>/<span id="bugMaxHealth">${gameState.battle.currentBug.maxHealth}</span></div>
+                    <div>${t('battle.health')}: <span id="bugHealth">${gameState.battle.currentBug.health}</span>/<span id="bugMaxHealth">${gameState.battle.currentBug.maxHealth}</span></div>
                     <div class="health-bar">
                         <div class="health-fill" id="bugHealthBar" style="width: ${(gameState.battle.currentBug.health / gameState.battle.currentBug.maxHealth) * 100}%"></div>
                     </div>
                 </div>
             </div>
-            <p>战斗自动进行中...</p>
+            <p>${t('battle.autoProgress')}</p>
         </div>
         ` : ''}
 
         <div class="section">
-            <h2>⬆️ 升级</h2>
+            <h2>⬆️ ${t('upgrade.title')}</h2>
             <div class="upgrade-section">
                 <div class="upgrade-item">
-                    <h4>提升算力</h4>
-                    <p>增加每秒LoC产量</p>
-                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.computingPower}</span> LoC</p>
+                    <h4>${t('upgrade.computingPower.name')}</h4>
+                    <p>${t('upgrade.computingPower.description')}</p>
+                    <p>${t('stats.cost')}: <span class="stat-value">${gameState.upgradeCosts.computingPower}</span> LoC</p>
                     <button class="upgrade-button" onclick="buyUpgrade('computingPower')"
                         ${gameState.resources.linesOfCode < gameState.upgradeCosts.computingPower ? 'disabled' : ''}>
-                        升级算力
+                        ${t('upgrade.computingPower.button')}
                     </button>
                 </div>
                 <div class="upgrade-item">
-                    <h4>提升攻击</h4>
-                    <p>更快击败Bug怪物</p>
-                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.attack}</span> LoC</p>
+                    <h4>${t('upgrade.attack.name')}</h4>
+                    <p>${t('upgrade.attack.description')}</p>
+                    <p>${t('stats.cost')}: <span class="stat-value">${gameState.upgradeCosts.attack}</span> LoC</p>
                     <button class="upgrade-button" onclick="buyUpgrade('attack')"
                         ${gameState.resources.linesOfCode < gameState.upgradeCosts.attack ? 'disabled' : ''}>
-                        升级攻击
+                        ${t('upgrade.attack.button')}
                     </button>
                 </div>
                 <div class="upgrade-item">
-                    <h4>提升防御</h4>
-                    <p>减少受到的伤害</p>
-                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.defense}</span> LoC</p>
+                    <h4>${t('upgrade.defense.name')}</h4>
+                    <p>${t('upgrade.defense.description')}</p>
+                    <p>${t('stats.cost')}: <span class="stat-value">${gameState.upgradeCosts.defense}</span> LoC</p>
                     <button class="upgrade-button" onclick="buyUpgrade('defense')"
                         ${gameState.resources.linesOfCode < gameState.upgradeCosts.defense ? 'disabled' : ''}>
-                        升级防御
+                        ${t('upgrade.defense.button')}
                     </button>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <h2>📊 统计</h2>
+            <h2>📊 ${t('statistics.title')}</h2>
             <div class="stat-item">
-                <span>总计生成LoC:</span>
+                <span>${t('statistics.totalLinesGenerated')}:</span>
                 <span class="stat-value">${Math.floor(gameState.statistics.totalLinesGenerated)}</span>
             </div>
             <div class="stat-item">
-                <span>击败Bug数量:</span>
+                <span>${t('statistics.totalBugsDefeated')}:</span>
                 <span class="stat-value">${gameState.statistics.totalBugsDefeated}</span>
             </div>
             <div class="stat-item">
-                <span>总游戏时间:</span>
-                <span class="stat-value">${Math.floor(gameState.statistics.totalPlayTime / 60)}分${gameState.statistics.totalPlayTime % 60}秒</span>
+                <span>${t('statistics.totalPlayTime')}:</span>
+                <span class="stat-value">${Math.floor(gameState.statistics.totalPlayTime / 60)}${t('statistics.minutes')}${gameState.statistics.totalPlayTime % 60}${t('statistics.seconds')}</span>
             </div>
             <div class="stat-item">
-                <span>敲击次数:</span>
+                <span>${t('statistics.keystrokes')}:</span>
                 <span class="stat-value">${gameState.statistics.keystrokes}</span>
             </div>
         </div>
