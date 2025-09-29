@@ -581,6 +581,9 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             document.getElementById('linesOfCode').textContent = Math.floor(gameState.resources.linesOfCode);
             document.getElementById('bugFragments').textContent = gameState.resources.bugFragments;
 
+            // 更新升级按钮状态
+            updateUpgradeButtons(gameState);
+
             // 更新战斗信息（如果存在）
             if (gameState.battle.isInBattle && gameState.battle.currentBug) {
                 const bugNameElement = document.getElementById('bugName');
@@ -595,6 +598,42 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                     const healthProgress = (gameState.battle.currentBug.health / gameState.battle.currentBug.maxHealth) * 100;
                     bugHealthBarElement.style.width = healthProgress + '%';
                 }
+            }
+        }
+
+        function updateUpgradeButtons(gameState) {
+            // 更新升级算力按钮
+            const computingPowerButton = document.querySelector('button[onclick*="computingPower"]');
+            if (computingPowerButton) {
+                computingPowerButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.computingPower;
+            }
+
+            // 更新升级攻击按钮
+            const attackButton = document.querySelector('button[onclick*="attack"]');
+            if (attackButton) {
+                attackButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.attack;
+            }
+
+            // 更新升级防御按钮
+            const defenseButton = document.querySelector('button[onclick*="defense"]');
+            if (defenseButton) {
+                defenseButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.defense;
+            }
+
+            // 更新升级费用显示
+            const computingPowerCostElement = document.querySelector('.upgrade-item:nth-child(1) .stat-value');
+            if (computingPowerCostElement) {
+                computingPowerCostElement.textContent = gameState.upgradeCosts.computingPower;
+            }
+
+            const attackCostElement = document.querySelector('.upgrade-item:nth-child(2) .stat-value');
+            if (attackCostElement) {
+                attackCostElement.textContent = gameState.upgradeCosts.attack;
+            }
+
+            const defenseCostElement = document.querySelector('.upgrade-item:nth-child(3) .stat-value');
+            if (defenseCostElement) {
+                defenseCostElement.textContent = gameState.upgradeCosts.defense;
             }
         }
 
