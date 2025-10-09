@@ -469,10 +469,10 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             </div>
             <div class="stat-item">
                 <span>每秒生成:</span>
-                <span class="stat-value">${gameState.stats.handSpeed} LoC/秒</span>
+                <span class="stat-value" id="locPerSecond">${gameState.stats.handSpeed} LoC/秒</span>
             </div>
             <div class="stat-item">
-                <span>击败Bug获得:(公式：基础碎片 * 迭代版本等级 * 0.1)</span>
+                <span>击败Bug获得:(公式:基础碎片 * 迭代版本等级 * 0.1)</span>
                 <span class="stat-value" id="fragmentsPerBug">${fragmentsPerBug} 碎片/Bug</span>
             </div>
         </div>
@@ -533,19 +533,19 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             <h2>📊 统计</h2>
             <div class="stat-item">
                 <span>总计生成LoC:</span>
-                <span class="stat-value">${Math.floor(gameState.statistics.totalLinesGenerated)}</span>
+                <span class="stat-value" id="totalLinesGenerated">${Math.floor(gameState.statistics.totalLinesGenerated)}</span>
             </div>
             <div class="stat-item">
                 <span>击败Bug数量:</span>
-                <span class="stat-value">${gameState.statistics.totalBugsDefeated}</span>
+                <span class="stat-value" id="totalBugsDefeated">${gameState.statistics.totalBugsDefeated}</span>
             </div>
             <div class="stat-item">
                 <span>总游戏时间:</span>
-                <span class="stat-value">${Math.floor(gameState.statistics.totalPlayTime / 60)}分${gameState.statistics.totalPlayTime % 60}秒</span>
+                <span class="stat-value" id="totalPlayTime">${Math.floor(gameState.statistics.totalPlayTime / 60)}分${gameState.statistics.totalPlayTime % 60}秒</span>
             </div>
             <div class="stat-item">
                 <span>敲击次数:</span>
-                <span class="stat-value">${gameState.statistics.keystrokes}</span>
+                <span class="stat-value" id="keystrokes">${gameState.statistics.keystrokes}</span>
             </div>
         </div>
     </div>
@@ -599,6 +599,9 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 fragmentsPerBugElement.textContent = fragmentsPerBug + ' 碎片/Bug';
             }
 
+            // 更新统计数据
+            updateStatistics(gameState);
+
             // 更新升级按钮状态
             updateUpgradeButtons(gameState);
 
@@ -616,6 +619,37 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                     const healthProgress = (gameState.battle.currentBug.health / gameState.battle.currentBug.maxHealth) * 100;
                     bugHealthBarElement.style.width = healthProgress + '%';
                 }
+            }
+        }
+
+        function updateStatistics(gameState) {
+            // 更新统计数据
+            const totalLinesGeneratedElement = document.getElementById('totalLinesGenerated');
+            if (totalLinesGeneratedElement) {
+                totalLinesGeneratedElement.textContent = Math.floor(gameState.statistics.totalLinesGenerated);
+            }
+
+            const totalBugsDefeatedElement = document.getElementById('totalBugsDefeated');
+            if (totalBugsDefeatedElement) {
+                totalBugsDefeatedElement.textContent = gameState.statistics.totalBugsDefeated;
+            }
+
+            const totalPlayTimeElement = document.getElementById('totalPlayTime');
+            if (totalPlayTimeElement) {
+                const minutes = Math.floor(gameState.statistics.totalPlayTime / 60);
+                const seconds = gameState.statistics.totalPlayTime % 60;
+                totalPlayTimeElement.textContent = minutes + '分' + seconds + '秒';
+            }
+
+            const keystrokesElement = document.getElementById('keystrokes');
+            if (keystrokesElement) {
+                keystrokesElement.textContent = gameState.statistics.keystrokes;
+            }
+
+            // 更新每秒LoC
+            const locPerSecondElement = document.getElementById('locPerSecond');
+            if (locPerSecondElement) {
+                locPerSecondElement.textContent = gameState.stats.handSpeed + ' LoC/秒';
             }
         }
 
