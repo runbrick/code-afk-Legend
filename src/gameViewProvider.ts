@@ -230,6 +230,11 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
     private getWebviewContent(): string {
         const gameState = this.gameStateManager.getGameState();
 
+        // 计算当前等级Bug的基础碎片奖励
+        const baseReward = Math.max(1, Math.floor(gameState.character.level / 2));
+        const baseBugFragments = baseReward;
+        const fragmentsPerBug = this.gameStateManager.calculateFragmentsPerBug(baseBugFragments);
+
         return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -466,6 +471,10 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 <span>每秒生成:</span>
                 <span class="stat-value">${gameState.stats.handSpeed} LoC/秒</span>
             </div>
+            <div class="stat-item">
+                <span>击败Bug获得:(公式：基础碎片 * 迭代版本等级 * 0.1)</span>
+                <span class="stat-value" id="fragmentsPerBug">${fragmentsPerBug} 碎片/Bug</span>
+            </div>
         </div>
 
         ${gameState.battle.isInBattle && gameState.battle.currentBug ? `
@@ -501,7 +510,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 </div>
                 <div class="upgrade-item">
                     <h4>提升算法</h4>
-                    <p>更快击败Bug怪物</p>
+                    <p>更快击败Bug</p>
                     <p>费用: <span class="stat-value">${gameState.upgradeCosts.algorithm}</span> LoC</p>
                     <button class="upgrade-button" onclick="buyUpgrade('algorithm')"
                         ${gameState.resources.linesOfCode < gameState.upgradeCosts.algorithm ? 'disabled' : ''}>
@@ -510,7 +519,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 </div>
                 <div class="upgrade-item">
                     <h4>提升迭代版本</h4>
-                    <p>减少受到的伤害</p>
+                    <p>获得更多的碎片</p>
                     <p>费用: <span class="stat-value">${gameState.upgradeCosts.iteration}</span> LoC</p>
                     <button class="upgrade-button" onclick="buyUpgrade('iteration')"
                         ${gameState.resources.linesOfCode < gameState.upgradeCosts.iteration ? 'disabled' : ''}>
@@ -580,6 +589,15 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             // 更新资源
             document.getElementById('linesOfCode').textContent = Math.floor(gameState.resources.linesOfCode);
             document.getElementById('bugFragments').textContent = gameState.resources.bugFragments;
+
+            // 更新碎片产出显示
+            const baseReward = Math.max(1, Math.floor(gameState.character.level / 2));
+            const fragmentBonus = Math.floor(baseReward * gameState.stats.iteration * 0.1);
+            const fragmentsPerBug = baseReward + fragmentBonus;
+            const fragmentsPerBugElement = document.getElementById('fragmentsPerBug');
+            if (fragmentsPerBugElement) {
+                fragmentsPerBugElement.textContent = fragmentsPerBug + ' 碎片/Bug';
+            }
 
             // 更新升级按钮状态
             updateUpgradeButtons(gameState);

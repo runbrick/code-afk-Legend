@@ -138,6 +138,14 @@ export class GameStateManager {
     }
 
     /**
+     * 计算击败Bug时获得的碎片数量（包括迭代版本加成）
+     */
+    public calculateFragmentsPerBug(baseBugFragments: number): number {
+        const fragmentBonus = Math.floor(baseBugFragments * this.gameState.stats.iteration * 0.1);
+        return baseBugFragments + fragmentBonus;
+    }
+
+    /**
      * 处理战斗逻辑
      */
     private processBattle(): void {
@@ -166,7 +174,12 @@ export class GameStateManager {
      */
     private defeatBug(bug: Bug): void {
         this.gameState.resources.linesOfCode += bug.reward.linesOfCode;
-        this.gameState.resources.bugFragments += bug.reward.bugFragments;
+
+        // 根据迭代版本增加碎片奖励
+        const fragmentBonus = Math.floor(bug.reward.bugFragments * this.gameState.stats.iteration * 0.1);
+        const totalFragments = bug.reward.bugFragments + fragmentBonus;
+        this.gameState.resources.bugFragments += totalFragments;
+
         this.gameState.character.experience += bug.reward.experience;
         this.gameState.statistics.totalBugsDefeated++;
 
@@ -175,7 +188,7 @@ export class GameStateManager {
 
         if (this.gameState.settings.showNotifications) {
             vscode.window.showInformationMessage(
-                `击败了 ${bug.name}！获得 ${bug.reward.linesOfCode} LoC, ${bug.reward.bugFragments} Bug碎片`
+                `击败了 ${bug.name}！获得 ${bug.reward.linesOfCode} LoC, ${totalFragments} Bug碎片`
             );
         }
     }
