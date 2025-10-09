@@ -18,15 +18,15 @@ export interface GameState {
     };
     /** 角色属性 */
     stats: {
-        computingPower: number;
-        attack: number;
-        defense: number;
+        handSpeed: number;
+        algorithm: number;
+        iteration: number;
     };
     /** 升级成本 */
     upgradeCosts: {
-        computingPower: number;
-        attack: number;
-        defense: number;
+        handSpeed: number;
+        algorithm: number;
+        iteration: number;
     };
     /** 装备信息 */
     equipment: {
@@ -64,8 +64,8 @@ export interface Bug {
     type: 'NullPointerException' | 'MemoryLeak' | 'InfiniteLoop' | 'SyntaxError' | 'RuntimeError';
     health: number;
     maxHealth: number;
-    attack: number;
-    defense: number;
+    algorithm: number;
+    iteration: number;
     reward: {
         linesOfCode: number;
         bugFragments: number;
@@ -127,7 +127,7 @@ export class GameStateManager {
      * 计算每秒生成的代码行数
      */
     private calculateLocPerSecond(): number {
-        let baseRate = this.gameState.stats.computingPower;
+        let baseRate = this.gameState.stats.handSpeed;
 
         // 装备加成
         if (this.gameState.equipment.ideExtension.owned) {
@@ -146,10 +146,10 @@ export class GameStateManager {
         }
 
         const bug = this.gameState.battle.currentBug;
-        const playerAttack = this.gameState.stats.attack;
+        const playerAlgorithm = this.gameState.stats.algorithm;
 
         // 玩家攻击Bug
-        const damage = Math.max(1, playerAttack - bug.defense);
+        const damage = Math.max(1, playerAlgorithm - bug.iteration);
         bug.health -= damage;
 
         if (bug.health <= 0) {
@@ -157,7 +157,7 @@ export class GameStateManager {
             this.defeatBug(bug);
         } else {
             // Bug攻击玩家（暂时没有玩家血量系统，可以后续添加）
-            // const bugDamage = Math.max(1, bug.attack - this.gameState.stats.defense);
+            // const bugDamage = Math.max(1, bug.algorithm - this.gameState.stats.iteration);
         }
     }
 
@@ -197,7 +197,7 @@ export class GameStateManager {
      */
     private createBug(type: Bug['type']): Bug {
         const baseHealth = 10 + this.gameState.character.level * 5;
-        const baseAttack = 5 + this.gameState.character.level * 2;
+        const baseAlgorithm = 5 + this.gameState.character.level * 2;
         const baseReward = Math.max(1, Math.floor(this.gameState.character.level / 2));
 
         return {
@@ -205,8 +205,8 @@ export class GameStateManager {
             type,
             health: baseHealth,
             maxHealth: baseHealth,
-            attack: baseAttack,
-            defense: Math.floor(baseAttack * 0.2),
+            algorithm: baseAlgorithm,
+            iteration: Math.floor(baseAlgorithm * 0.2),
             reward: {
                 linesOfCode: baseReward * 10,
                 bugFragments: baseReward,
@@ -239,9 +239,9 @@ export class GameStateManager {
             this.gameState.character.experienceToNext = this.calculateExperienceForNextLevel();
 
             // 升级时提升基础属性
-            this.gameState.stats.computingPower += 1;
-            this.gameState.stats.attack += 2;
-            this.gameState.stats.defense += 1;
+            this.gameState.stats.handSpeed += 1;
+            this.gameState.stats.algorithm += 2;
+            this.gameState.stats.iteration += 1;
 
             if (this.gameState.settings.showNotifications) {
                 vscode.window.showInformationMessage(`恭喜！升级到 ${this.gameState.character.level} 级！`);
@@ -259,12 +259,12 @@ export class GameStateManager {
     /**
      * 购买属性升级
      */
-    public buyUpgrade(upgradeType: 'computingPower' | 'attack' | 'defense'): boolean {
+    public buyUpgrade(upgradeType: 'handSpeed' | 'algorithm' | 'iteration'): boolean {
         const cost = this.gameState.upgradeCosts[upgradeType];
 
         if (this.gameState.resources.linesOfCode >= cost) {
             this.gameState.resources.linesOfCode -= cost;
-            this.gameState.stats[upgradeType] += upgradeType === 'computingPower' ? 1 : 2;
+            this.gameState.stats[upgradeType] += upgradeType === 'handSpeed' ? 1 : 2;
             this.gameState.upgradeCosts[upgradeType] = Math.floor(cost * 1.5);
             return true;
         }
@@ -305,13 +305,55 @@ export class GameStateManager {
      * 加载游戏状态
      */
     private loadGameState(): GameState {
-        const savedState = this.context.globalState.get<GameState>(this.saveKey);
+        const savedState = this.context.globalState.get<any>(this.saveKey);
 
         if (savedState) {
-            return savedState;
+            // 数据迁移：处理旧版本的变量名
+            if (savedState.stats) {
+                if (savedState.stats.computingPower !== undefined) {
+                    savedState.stats.handSpeed = savedState.stats.computingPower;
+                    delete savedState.stats.computingPower;
+                }
+                if (savedState.stats.attack !== undefined) {
+                    savedState.stats.algorithm = savedState.stats.attack;
+                    delete savedState.stats.attack;
+                }
+                if (savedState.stats.defense !== undefined) {
+                    savedState.stats.iteration = savedState.stats.defense;
+                    delete savedState.stats.defense;
+                }
+            }
+
+            if (savedState.upgradeCosts) {
+                if (savedState.upgradeCosts.computingPower !== undefined) {
+                    savedState.upgradeCosts.handSpeed = savedState.upgradeCosts.computingPower;
+                    delete savedState.upgradeCosts.computingPower;
+                }
+                if (savedState.upgradeCosts.attack !== undefined) {
+                    savedState.upgradeCosts.algorithm = savedState.upgradeCosts.attack;
+                    delete savedState.upgradeCosts.attack;
+                }
+                if (savedState.upgradeCosts.defense !== undefined) {
+                    savedState.upgradeCosts.iteration = savedState.upgradeCosts.defense;
+                    delete savedState.upgradeCosts.defense;
+                }
+            }
+
+            if (savedState.battle?.currentBug) {
+                const bug = savedState.battle.currentBug;
+                if (bug.attack !== undefined) {
+                    bug.algorithm = bug.attack;
+                    delete bug.attack;
+                }
+                if (bug.defense !== undefined) {
+                    bug.iteration = bug.defense;
+                    delete bug.defense;
+                }
+            }
+
+            return savedState as GameState;
         }
 
-        // 返回默认的游戏状态
         return this.createDefaultGameState();
     }
 
@@ -346,14 +388,14 @@ export class GameStateManager {
                 bugFragments: 0
             },
             stats: {
-                computingPower: 1,
-                attack: 5,
-                defense: 3
+                handSpeed: 1,
+                algorithm: 5,
+                iteration: 3
             },
             upgradeCosts: {
-                computingPower: 50,
-                attack: 30,
-                defense: 40
+                handSpeed: 50,
+                algorithm: 30,
+                iteration: 40
             },
             equipment: {
                 keyboard: { level: 1, owned: false },

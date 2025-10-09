@@ -79,7 +79,7 @@ function initializeStatusBar(): void {
  */
 function updateStatusBar(): void {
     const gameState = gameStateManager.getGameState();
-    statusBarItem.text = `$(code) LoC: ${Math.floor(gameState.resources.linesOfCode)} | CP: ${gameState.stats.computingPower}`;
+    statusBarItem.text = `$(code) LoC: ${Math.floor(gameState.resources.linesOfCode)} | 手速: ${gameState.stats.handSpeed}`;
 }
 
 /**

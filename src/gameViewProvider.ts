@@ -77,7 +77,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 '属性',
                 vscode.TreeItemCollapsibleState.Collapsed,
                 'stats',
-                `算力: ${gameState.stats.computingPower}, 攻击: ${gameState.stats.attack}, 防御: ${gameState.stats.defense}`
+                `手速: ${gameState.stats.handSpeed}, 算法: ${gameState.stats.algorithm}, 迭代版本: ${gameState.stats.iteration}`
             )
         ];
 
@@ -115,14 +115,14 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 return [
                     new GameTreeItem(`代码行数: ${Math.floor(gameState.resources.linesOfCode)}`, vscode.TreeItemCollapsibleState.None),
                     new GameTreeItem(`Bug碎片: ${gameState.resources.bugFragments}`, vscode.TreeItemCollapsibleState.None),
-                    new GameTreeItem(`每秒LoC: ${gameState.stats.computingPower}`, vscode.TreeItemCollapsibleState.None)
+                    new GameTreeItem(`每秒LoC: ${gameState.stats.handSpeed}`, vscode.TreeItemCollapsibleState.None)
                 ];
 
             case 'stats':
                 return [
-                    new GameTreeItem(`算力: ${gameState.stats.computingPower} (升级费用: ${gameState.upgradeCosts.computingPower} LoC)`, vscode.TreeItemCollapsibleState.None),
-                    new GameTreeItem(`攻击力: ${gameState.stats.attack} (升级费用: ${gameState.upgradeCosts.attack} LoC)`, vscode.TreeItemCollapsibleState.None),
-                    new GameTreeItem(`防御力: ${gameState.stats.defense} (升级费用: ${gameState.upgradeCosts.defense} LoC)`, vscode.TreeItemCollapsibleState.None)
+                    new GameTreeItem(`手速: ${gameState.stats.handSpeed} (升级费用: ${gameState.upgradeCosts.handSpeed} LoC)`, vscode.TreeItemCollapsibleState.None),
+                    new GameTreeItem(`算法: ${gameState.stats.algorithm} (升级费用: ${gameState.upgradeCosts.algorithm} LoC)`, vscode.TreeItemCollapsibleState.None),
+                    new GameTreeItem(`迭代版本: ${gameState.stats.iteration} (升级费用: ${gameState.upgradeCosts.iteration} LoC)`, vscode.TreeItemCollapsibleState.None)
                 ];
 
             default:
@@ -187,7 +187,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
     /**
      * 处理购买升级
      */
-    private handleBuyUpgrade(upgradeType: 'computingPower' | 'attack' | 'defense'): void {
+    private handleBuyUpgrade(upgradeType: 'handSpeed' | 'algorithm' | 'iteration'): void {
         const success = this.gameStateManager.buyUpgrade(upgradeType);
 
         if (success) {
@@ -204,9 +204,9 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
      */
     private getUpgradeDisplayName(upgradeType: string): string {
         const names = {
-            'computingPower': '算力',
-            'attack': '攻击力',
-            'defense': '防御力'
+            'handSpeed': '手速',
+            'algorithm': '算法',
+            'iteration': '迭代版本'
         };
         return names[upgradeType as keyof typeof names] || upgradeType;
     }
@@ -432,16 +432,16 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 </div>
                 <div>
                     <div class="stat-item">
-                        <span>算力:</span>
-                        <span class="stat-value" id="computingPower">${gameState.stats.computingPower}</span>
+                        <span>手速:</span>
+                        <span class="stat-value" id="handSpeed">${gameState.stats.handSpeed}</span>
                     </div>
                     <div class="stat-item">
-                        <span>攻击力:</span>
-                        <span class="stat-value" id="attack">${gameState.stats.attack}</span>
+                        <span>算法:</span>
+                        <span class="stat-value" id="algorithm">${gameState.stats.algorithm}</span>
                     </div>
                     <div class="stat-item">
-                        <span>防御力:</span>
-                        <span class="stat-value" id="defense">${gameState.stats.defense}</span>
+                        <span>迭代版本:</span>
+                        <span class="stat-value" id="iteration">${gameState.stats.iteration}</span>
                     </div>
                 </div>
             </div>
@@ -464,7 +464,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             </div>
             <div class="stat-item">
                 <span>每秒生成:</span>
-                <span class="stat-value">${gameState.stats.computingPower} LoC/秒</span>
+                <span class="stat-value">${gameState.stats.handSpeed} LoC/秒</span>
             </div>
         </div>
 
@@ -474,7 +474,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             <div class="battle-info">
                 <div>
                     <h3 id="bugName">${gameState.battle.currentBug.name}</h3>
-                    <p>攻击: ${gameState.battle.currentBug.attack} | 防御: ${gameState.battle.currentBug.defense}</p>
+                    <p>算法: ${gameState.battle.currentBug.algorithm} | 迭代版本: ${gameState.battle.currentBug.iteration}</p>
                 </div>
                 <div class="bug-health">
                     <div>血量: <span id="bugHealth">${gameState.battle.currentBug.health}</span>/<span id="bugMaxHealth">${gameState.battle.currentBug.maxHealth}</span></div>
@@ -491,30 +491,30 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             <h2>⬆️ 升级</h2>
             <div class="upgrade-section">
                 <div class="upgrade-item">
-                    <h4>提升算力</h4>
+                    <h4>提升手速</h4>
                     <p>增加每秒LoC产量</p>
-                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.computingPower}</span> LoC</p>
-                    <button class="upgrade-button" onclick="buyUpgrade('computingPower')"
-                        ${gameState.resources.linesOfCode < gameState.upgradeCosts.computingPower ? 'disabled' : ''}>
-                        升级算力
+                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.handSpeed}</span> LoC</p>
+                    <button class="upgrade-button" onclick="buyUpgrade('handSpeed')"
+                        ${gameState.resources.linesOfCode < gameState.upgradeCosts.handSpeed ? 'disabled' : ''}>
+                        升级手速
                     </button>
                 </div>
                 <div class="upgrade-item">
-                    <h4>提升攻击</h4>
+                    <h4>提升算法</h4>
                     <p>更快击败Bug怪物</p>
-                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.attack}</span> LoC</p>
-                    <button class="upgrade-button" onclick="buyUpgrade('attack')"
-                        ${gameState.resources.linesOfCode < gameState.upgradeCosts.attack ? 'disabled' : ''}>
-                        升级攻击
+                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.algorithm}</span> LoC</p>
+                    <button class="upgrade-button" onclick="buyUpgrade('algorithm')"
+                        ${gameState.resources.linesOfCode < gameState.upgradeCosts.algorithm ? 'disabled' : ''}>
+                        升级算法
                     </button>
                 </div>
                 <div class="upgrade-item">
-                    <h4>提升防御</h4>
+                    <h4>提升迭代版本</h4>
                     <p>减少受到的伤害</p>
-                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.defense}</span> LoC</p>
-                    <button class="upgrade-button" onclick="buyUpgrade('defense')"
-                        ${gameState.resources.linesOfCode < gameState.upgradeCosts.defense ? 'disabled' : ''}>
-                        升级防御
+                    <p>费用: <span class="stat-value">${gameState.upgradeCosts.iteration}</span> LoC</p>
+                    <button class="upgrade-button" onclick="buyUpgrade('iteration')"
+                        ${gameState.resources.linesOfCode < gameState.upgradeCosts.iteration ? 'disabled' : ''}>
+                        升级迭代版本
                     </button>
                 </div>
             </div>
@@ -569,9 +569,9 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
             document.getElementById('characterExp').textContent = gameState.character.experience + '/' + gameState.character.experienceToNext;
 
             // 更新属性
-            document.getElementById('computingPower').textContent = gameState.stats.computingPower;
-            document.getElementById('attack').textContent = gameState.stats.attack;
-            document.getElementById('defense').textContent = gameState.stats.defense;
+            document.getElementById('handSpeed').textContent = gameState.stats.handSpeed;
+            document.getElementById('algorithm').textContent = gameState.stats.algorithm;
+            document.getElementById('iteration').textContent = gameState.stats.iteration;
 
             // 更新经验条
             const expProgress = (gameState.character.experience / gameState.character.experienceToNext) * 100;
@@ -602,38 +602,38 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
         }
 
         function updateUpgradeButtons(gameState) {
-            // 更新升级算力按钮
-            const computingPowerButton = document.querySelector('button[onclick*="computingPower"]');
-            if (computingPowerButton) {
-                computingPowerButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.computingPower;
+            // 更新升级手速按钮
+            const handSpeedButton = document.querySelector('button[onclick*="handSpeed"]');
+            if (handSpeedButton) {
+                handSpeedButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.handSpeed;
             }
 
-            // 更新升级攻击按钮
-            const attackButton = document.querySelector('button[onclick*="attack"]');
-            if (attackButton) {
-                attackButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.attack;
+            // 更新升级算法按钮
+            const algorithmButton = document.querySelector('button[onclick*="algorithm"]');
+            if (algorithmButton) {
+                algorithmButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.algorithm;
             }
 
-            // 更新升级防御按钮
-            const defenseButton = document.querySelector('button[onclick*="defense"]');
-            if (defenseButton) {
-                defenseButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.defense;
+            // 更新升级迭代版本按钮
+            const iterationButton = document.querySelector('button[onclick*="iteration"]');
+            if (iterationButton) {
+                iterationButton.disabled = gameState.resources.linesOfCode < gameState.upgradeCosts.iteration;
             }
 
             // 更新升级费用显示
-            const computingPowerCostElement = document.querySelector('.upgrade-item:nth-child(1) .stat-value');
-            if (computingPowerCostElement) {
-                computingPowerCostElement.textContent = gameState.upgradeCosts.computingPower;
+            const handSpeedCostElement = document.querySelector('.upgrade-item:nth-child(1) .stat-value');
+            if (handSpeedCostElement) {
+                handSpeedCostElement.textContent = gameState.upgradeCosts.handSpeed;
             }
 
-            const attackCostElement = document.querySelector('.upgrade-item:nth-child(2) .stat-value');
-            if (attackCostElement) {
-                attackCostElement.textContent = gameState.upgradeCosts.attack;
+            const algorithmCostElement = document.querySelector('.upgrade-item:nth-child(2) .stat-value');
+            if (algorithmCostElement) {
+                algorithmCostElement.textContent = gameState.upgradeCosts.algorithm;
             }
 
-            const defenseCostElement = document.querySelector('.upgrade-item:nth-child(3) .stat-value');
-            if (defenseCostElement) {
-                defenseCostElement.textContent = gameState.upgradeCosts.defense;
+            const iterationCostElement = document.querySelector('.upgrade-item:nth-child(3) .stat-value');
+            if (iterationCostElement) {
+                iterationCostElement.textContent = gameState.upgradeCosts.iteration;
             }
         }
 
