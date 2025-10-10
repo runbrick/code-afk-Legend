@@ -138,11 +138,12 @@ export class GameStateManager {
     }
 
     /**
-     * 计算击败Bug时获得的碎片数量（包括迭代版本加成）
+     * 计算击败Bug时获得的碎片数量（包括算法和迭代版本加成）
      */
     public calculateFragmentsPerBug(baseBugFragments: number): number {
-        const fragmentBonus = Math.floor(baseBugFragments * this.gameState.stats.iteration * 0.1);
-        return baseBugFragments + fragmentBonus;
+        const algorithmBonus = Math.floor(baseBugFragments * this.gameState.stats.algorithm * 0.1);
+        const iterationBonus = Math.floor(baseBugFragments * this.gameState.stats.iteration * 0.1);
+        return baseBugFragments + algorithmBonus + iterationBonus;
     }
 
     /**
@@ -175,9 +176,10 @@ export class GameStateManager {
     private defeatBug(bug: Bug): void {
         this.gameState.resources.linesOfCode += bug.reward.linesOfCode;
 
-        // 根据迭代版本增加碎片奖励
-        const fragmentBonus = Math.floor(bug.reward.bugFragments * this.gameState.stats.iteration * 0.1);
-        const totalFragments = bug.reward.bugFragments + fragmentBonus;
+        // 根据算法和迭代版本增加碎片奖励
+        const algorithmBonus = Math.floor(bug.reward.bugFragments * this.gameState.stats.algorithm * 0.1);
+        const iterationBonus = Math.floor(bug.reward.bugFragments * this.gameState.stats.iteration * 0.1);
+        const totalFragments = bug.reward.bugFragments + algorithmBonus + iterationBonus;
         this.gameState.resources.bugFragments += totalFragments;
 
         this.gameState.character.experience += bug.reward.experience;

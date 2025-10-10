@@ -472,7 +472,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 <span class="stat-value" id="locPerSecond">${gameState.stats.handSpeed} LoC/秒</span>
             </div>
             <div class="stat-item">
-                <span>击败Bug获得:(公式:基础碎片 * 迭代版本等级 * 0.1)</span>
+                <span>击败Bug获得:(公式:基础碎片 + 基础碎片*算法*0.1 + 基础碎片*迭代版本*0.1)</span>
                 <span class="stat-value" id="fragmentsPerBug">${fragmentsPerBug} 碎片/Bug</span>
             </div>
         </div>
@@ -510,7 +510,7 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
                 </div>
                 <div class="upgrade-item">
                     <h4>提升算法</h4>
-                    <p>更快击败Bug</p>
+                    <p>获得更多碎片</p>
                     <p>费用: <span class="stat-value">${gameState.upgradeCosts.algorithm}</span> LoC</p>
                     <button class="upgrade-button" onclick="buyUpgrade('algorithm')"
                         ${gameState.resources.linesOfCode < gameState.upgradeCosts.algorithm ? 'disabled' : ''}>
@@ -592,8 +592,9 @@ export class IdleCodingGameProvider implements vscode.TreeDataProvider<GameTreeI
 
             // 更新碎片产出显示
             const baseReward = Math.max(1, Math.floor(gameState.character.level / 2));
-            const fragmentBonus = Math.floor(baseReward * gameState.stats.iteration * 0.1);
-            const fragmentsPerBug = baseReward + fragmentBonus;
+            const algorithmBonus = Math.floor(baseReward * gameState.stats.algorithm * 0.1);
+            const iterationBonus = Math.floor(baseReward * gameState.stats.iteration * 0.1);
+            const fragmentsPerBug = baseReward + algorithmBonus + iterationBonus;
             const fragmentsPerBugElement = document.getElementById('fragmentsPerBug');
             if (fragmentsPerBugElement) {
                 fragmentsPerBugElement.textContent = fragmentsPerBug + ' 碎片/Bug';
